@@ -1,0 +1,28 @@
+#lang sicp
+
+(define (square n) (* n n))
+(define (check-nontrivial n m)
+  (define sqr (square n))
+  (if (and (not (or (= n 1) (= n (- m 1))))
+           (= (remainder sqr m) 1))
+      0
+      (remainder sqr m)))
+(define (expmod base exp m)
+  (cond ((= exp 0) 1)
+        ((even? exp) (check-nontrivial (expmod base (/ exp 2) m) m))
+        (else (remainder (* base (expmod base (- exp 1) m)) m))))
+(define (fermat-test n)
+  (define (try-it a)
+    (= (expmod a n n) a))
+  (try-it (+ 1 (random (- n 1)))))
+(define (fast-prime? n times)
+  (cond ((= times 0) #t)
+        ((fermat-test n) (fast-prime? n (- times 1)))
+        (else #f)))
+
+(fast-prime? 561 15)
+(fast-prime? 1105 15)
+(fast-prime? 1729 15)
+(fast-prime? 2465 15)
+(fast-prime? 2821 15)
+(fast-prime? 6601 15)
